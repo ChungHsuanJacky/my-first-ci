@@ -1,4 +1,4 @@
-name: Edge Device CI Pipeline
+name: Edge Device CI/CD Pipeline
 
 on:
   push:
@@ -6,18 +6,34 @@ on:
       - main
 
 jobs:
+  # 第一階段：CI 測試
   build-and-test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
       - name: Run Unit Tests
         run: |
           python -m unittest test_app.py
+
+  # 第二階段：CD 模擬部署
+  deploy-to-server:
+    needs: build-and-test     # 這行是靈魂：規定必須等 build-and-test 成功才能執行
+    runs-on: ubuntu-latest
+    steps:
+      - name: 模擬 SSH 連線到正式機房
+        run: echo "正在連線到正式伺服器..."
+        
+      - name: 模擬下載新版程式碼
+        run: |
+          echo "停用舊版服務..."
+          sleep 2
+          echo "下載綠燈通過的新版程式碼..."
+          sleep 2
+          
+      - name: 模擬重啟服務
+        run: echo "服務重啟成功，新功能正式上線！"
