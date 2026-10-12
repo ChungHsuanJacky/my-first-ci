@@ -21,3 +21,43 @@ jobs:
       - name: Run Unit Tests
         run: |
           python -m unittest test_app.py
+name: Edge Device CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # 這是你原本的 CI 測試任務
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Run Unit Tests
+        run: |
+          python -m unittest test_app.py
+
+  # 這是全新的 CD 部署任務
+  deploy-to-server:
+    needs: build-and-test     # 【核心關鍵】這行規定：必須等 build-and-test 成功(綠燈)，才能執行部署
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  # 確保只有 main 分支的程式碼會被部署
+    steps:
+      - name: 模擬 SSH 連線到機房伺服器
+        run: echo "Starting SSH connection to Production Server..."
+        
+      - name: 模擬停止舊服務並派發新版本
+        run: |
+          echo "Stopping old service..."
+          sleep 2  # 模擬系統等待時間
+          echo "Downloading latest verified code..."
+          sleep 2
+          
+      - name: 模擬重啟並確認上線
+        run: echo "Service restarted successfully. New version is LIVE!"
